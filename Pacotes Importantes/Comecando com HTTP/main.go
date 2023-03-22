@@ -1,6 +1,23 @@
 package main
 
-import "net/http"
+import (
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
+)
+
+type ViaCep struct {
+	Cep         string `json:"cep"`
+	Logradouro  string `json:"logradouro"`
+	Complemento string `json:"complemento"`
+	Bairro      string `json:"bairro"`
+	Localidade  string `json:"localidade"`
+	Uf          string `json:"uf"`
+	Ibge        string `json:"ibge"`
+	Gia         string `json:"gia"`
+	Ddd         string `json:"ddd"`
+	Siafi       string `json:"siafi"`
+}
 
 func main() {
 	http.HandleFunc("/", SearchCEP)
@@ -17,7 +34,30 @@ func SearchCEP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	cep, err := GetCEP(cepParam)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Teste"))
+	json.NewEncoder(w).Encode(cep)
+}
+
+func GetCEP(cep string) (*ViaCep, error) {
+	res, err := http.Get("http://viacep.com.br/ws/" + cep + "/json/")
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	var c ViaCep
+	err = json.Unmarshal(body, &c)
+	if err != nil {
+		return nil, err
+	}
+	return &c, nil
 }
