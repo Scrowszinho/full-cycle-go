@@ -1,8 +1,10 @@
 package main
 
 import (
+	"html/template"
 	"net/http"
-	"text/template"
+	"os"
+	"strings"
 )
 
 type Curso struct {
@@ -18,16 +20,16 @@ func main() {
 		"template.html",
 		"footer.html",
 	}
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		t := template.Must(template.New("template.html").ParseFiles(templates...))
-		err := t.Execute(w, Cursos{
-			{"Test", 12},
-			{"Teste", 15},
-			{"Teste", 18},
-		})
-		if err != nil {
-			panic(err)
-		}
+	t := template.New("content.html")
+	t.Funcs(template.FuncMap{"ToUpper": strings.ToUpper})
+	t = template.Must(t.ParseFiles(templates...))
+	err := t.Execute(os.Stdout, Cursos{
+		{"Test", 12},
+		{"Teste", 15},
+		{"Teste", 18},
 	})
+	if err != nil {
+		panic(err)
+	}
 	http.ListenAndServe(":8080", nil)
 }
