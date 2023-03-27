@@ -8,7 +8,7 @@ import (
 
 func main() {
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Second*6)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*3)
 	defer cancel()
 	BookHotel(ctx)
 }
