@@ -13,7 +13,7 @@ type Product struct {
 	Price float64
 }
 
-func NewProduct(id string, name string, price float64) *Product {
+func NewProduct(name string, price float64) *Product {
 	return &Product{
 		ID:    uuid.New().String(),
 		Name:  name,
@@ -22,9 +22,27 @@ func NewProduct(id string, name string, price float64) *Product {
 }
 
 func main() {
-	db, err := sql.Open("mysql", "root:1234@tcp(localhost:3307)/goexpert")
+	db, err := sql.Open("mysql", "root:root@tcp(localhost:3307)/goexpert")
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
+	product := NewProduct("Notebook", 1549.99)
+	err = insertProduct(db, product)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func insertProduct(db *sql.DB, product *Product) error {
+	stmt, err := db.Prepare(`INSERT INTO products(id, name, price) VALUES(? ? ?)`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(product.ID, product.Name, product.Price)
+	if err != nil {
+		return err
+	}
+	return nil
 }
