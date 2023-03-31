@@ -43,9 +43,14 @@ func main() {
 	// }
 	// fmt.Printf("Product: %v, Price: %.2f", p.Name, p.Price)
 	products, err := selectMultipleProduct(db)
+	var id string
 	for _,p  := range products {
 		fmt.Printf("Id: %v - Product: %v, Price: %.2f\n", p.ID, p.Name, p.Price)
-
+		id = p.ID
+	}
+	err = deleteById(db, id)
+	if err != nil {
+		panic(err)
 	}
 }
 
@@ -106,4 +111,17 @@ func selectMultipleProduct(db *sql.DB) ([]Product, error) {
 	}
 	return p, nil
 
+}
+
+func deleteById(db *sql.DB, id string) error {
+	stmt, err := db.Prepare("delete from products where id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
