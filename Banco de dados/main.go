@@ -27,21 +27,26 @@ func main() {
 		panic(err)
 	}
 	defer db.Close()
-	product := NewProduct("Notebook", 1549.99)
-	err = insertProduct(db, product)
-	if err != nil {
-		panic(err)
+	// product := NewProduct("Notebook", 1549.99)
+	// err = insertProduct(db, product)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// product.Price = 1600.0
+	// err = updateProduct(db, product)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// p, err := selectOneProduct(db, product.ID)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Printf("Product: %v, Price: %.2f", p.Name, p.Price)
+	products, err := selectMultipleProduct(db)
+	for _,p  := range products {
+		fmt.Printf("Id: %v - Product: %v, Price: %.2f\n", p.ID, p.Name, p.Price)
+
 	}
-	product.Price = 1600.0
-	err = updateProduct(db, product)
-	if err != nil {
-		panic(err)
-	}
-	p, err := selectOneProduct(db, product.ID)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Product: %v, Price: %.2f", p.Name, p.Price)
 }
 
 func insertProduct(db *sql.DB, product *Product) error {
@@ -82,4 +87,23 @@ func selectOneProduct(db *sql.DB, id string) (*Product, error) {
 		return nil, err
 	}
 	return &p, nil
+}
+
+func selectMultipleProduct(db *sql.DB) ([]Product, error) {
+	rows, err := db.Query("SELECT id, name, price from products")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var p []Product
+	for rows.Next() {
+		var p2 Product
+		err = rows.Scan(&p2.ID, &p2.Name, &p2.Price)
+		if err != nil {
+			return nil, err
+		}
+		p = append(p, p2)
+	}
+	return p, nil
+
 }
