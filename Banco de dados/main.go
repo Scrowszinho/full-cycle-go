@@ -22,7 +22,7 @@ func NewProduct(name string, price float64) *Product {
 }
 
 func main() {
-	db, err := sql.Open("mysql", "root:root@tcp(localhost:3307)/goexpert")
+	db, err := sql.Open("mysql", "root:1234@tcp(localhost:3306)/goexpert")
 	if err != nil {
 		panic(err)
 	}
@@ -35,7 +35,7 @@ func main() {
 }
 
 func insertProduct(db *sql.DB, product *Product) error {
-	stmt, err := db.Prepare(`INSERT INTO products(id, name, price) VALUES(? ? ?)`)
+	stmt, err := db.Prepare(`INSERT INTO products(id, name, price) VALUES(?, ?, ?)`)
 	if err != nil {
 		return err
 	}
