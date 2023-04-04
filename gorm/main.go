@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -18,9 +20,17 @@ func main() {
 		panic(err)
 	}
 	db.AutoMigrate(&Product{})
-	db.Create(&Product{
-		ID:    1,
-		Name:  "Teste Product",
-		Price: 10,
-	})
+	// products := []Product{
+	// 	{Name: "Notebook", Price: 1000},
+	// 	{Name: "Smartphone", Price: 2000},
+	// 	{Name: "Iphone", Price: 3000},
+	// }
+	// db.Create(&products)
+	var products []Product
+	// db.First(&products, 1)
+	// fmt.Println(products)
+	// db.First(&products, "name = ?", "Iphone")
+	// fmt.Println(products)
+	db.Find(&products)
+	fmt.Println(products)
 }
