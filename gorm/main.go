@@ -31,6 +31,9 @@ func main() {
 	// fmt.Println(products)
 	// db.First(&products, "name = ?", "Iphone")
 	// fmt.Println(products)
-	db.Find(&products)
+	// db.Limit(2).Offset(2).Find(&products)
+	// fmt.Println(products)
+	// db.Where("price >= ?", 1000).Find(&products)
+	db.Where("name LIKE ?", "%a%").Find(&products)
 	fmt.Println(products)
 }
