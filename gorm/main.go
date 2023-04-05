@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -10,6 +12,21 @@ type Product struct {
 	Name  string
 	Price float64
 	gorm.Model
+	CategoryID   int
+	Category     Category
+	SerialNumber SerialNumber
+}
+
+type Category struct {
+	ID   int `gorm:primaryKey`
+	Name string
+	gorm.Model
+}
+
+type SerialNumber struct {
+	ID        int `gorm:primaryKey`
+	Number    string
+	ProductID int
 }
 
 func main() {
@@ -18,32 +35,18 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&Product{})
-	// products := []Product{
-	// 	{Name: "Notebook", Price: 1000},
-	// 	{Name: "Smartphone", Price: 2000},
-	// 	{Name: "Iphone", Price: 3000},
-	// }
-	// db.Create(&products)
-	var products Product
-	// db.First(&products, 1)
-	// fmt.Println(products)
-	// db.First(&products, "name = ?", "Iphone")
-	// fmt.Println(products)
-	// db.Limit(2).Offset(2).Find(&products)
-	// fmt.Println(products)
-	// db.Where("price >= ?", 1000).Find(&products)
-	// db.Where("name LIKE ?", "%a%").Find(&products)
-	// db.First(&products, 1)
-	// products.Name = "Mouse"
-	// db.Save(products)
-	// db.Delete(&products)
-	// products := []Product{
-	// 	{Name: "Notebook", Price: 1000},
-	// 	{Name: "Smartphone", Price: 2000},
-	// 	{Name: "Iphone", Price: 3000},
-	// }
-	// db.Create(&products)
-	db.First(&products, 1)
-	db.Delete(&products)
+	db.AutoMigrate(&Product{}, &Category{}, &SerialNumber{})
+
+	// category := Category{Name: "Miscellaneous"}
+	// db.Create(&category)
+
+	// product := Product{Name: "Car Toy", Price: 5, CategoryID: category.ID}
+	// db.Create(&product)
+
+	// serialNumber := SerialNumber{Number: "a10", ProductID: 2}
+	// db.Create(&serialNumber)
+
+	var products []Product
+	db.Preload("Category").Preload("SerialNumber").Find(&products)
+	fmt.Println(products[0].SerialNumber.Number)
 }
