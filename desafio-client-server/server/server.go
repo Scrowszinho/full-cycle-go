@@ -33,21 +33,21 @@ func GetExchanges() (*UsdToDolar, error) {
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, "GET", "https://economia.awesomeapi.com.br/json/last/USD-BRL", nil)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 	var usd UsdToDolar
 	err = json.Unmarshal(body, &usd)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 	return &usd, nil
 }
