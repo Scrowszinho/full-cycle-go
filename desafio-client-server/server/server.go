@@ -67,7 +67,11 @@ func SetExchange(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*10)
 	defer cancel()
-	SaveInDB(ctx, exchange.USDBRL.Bid)
+	err = SaveInDB(ctx, exchange.USDBRL.Bid)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
 	json.NewEncoder(w).Encode(exchange.USDBRL.Bid)
 
@@ -78,15 +82,17 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 
-func SaveInDB(ctx context.Context, usd string) {
+func SaveInDB(ctx context.Context, usd string) error {
 	select {
 	case <-ctx.Done():
-		return
+		println("Error: ", ctx.Err())
+		return ctx.Err()
 	default:
 		database, _ := sql.Open("sqlite3", "./cotacao.db")
 		stmt, _ := database.Prepare("CREATE TABLE IF NOT EXISTS cotacao (id INTEGER PRIMARY KEY AUTOINCREMENT, cotacao float64)")
 		stmt.Exec()
 		stmt, _ = database.Prepare("INSERT INTO cotacao (cotacao) VALUES (?)")
 		stmt.Exec(usd)
+		return nil
 	}
 }
