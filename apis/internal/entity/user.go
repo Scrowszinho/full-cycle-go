@@ -1,4 +1,4 @@
-package enity
+package entity
 
 import (
 	"github.com/Scrowszinho/full-cycle-go/apis/pkg/entity"
