@@ -1,22 +1,29 @@
 package main
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
-func task(name string) {
+func task(name string, wg *sync.WaitGroup) {
 	for i := 0; i < 10; i++ {
 		println(name, ":", i)
 		time.Sleep(1 * time.Second)
+		wg.Done()
 	}
 }
 
 func main() {
-	go task("A")
-	go task("B")
+	waitGroup := sync.WaitGroup{}
+	waitGroup.Add(25)
+	go task("A", &waitGroup)
+	go task("B", &waitGroup)
 	go func() {
 		for i := 0; i < 5; i++ {
 			println("anonymous", ":", i)
 			time.Sleep(1 * time.Second)
+			waitGroup.Done()
 		}
 	}()
-	time.Sleep(15 * time.Second)
+	waitGroup.Wait()
 }
