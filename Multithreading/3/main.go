@@ -1,17 +1,17 @@
 package main
 
-import "fmt"
-
 // Thread 1
 func main() {
-	channel := make(chan string)
+	forever := make(chan bool)
 
 	// Thread 2
 	go func() {
-		channel <- "Ola Mundo"
+		for i := 0; i < 10; i++ {
+			println(i)
+		}
+		forever <- true
 	}()
 
-	// Thread 1
-	msg := <-channel
-	fmt.Println(msg)
+	<-forever
+
 }
