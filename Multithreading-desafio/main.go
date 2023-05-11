@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 type ViaCep struct {
@@ -31,8 +33,16 @@ type ApiCep struct {
 func main() {
 	c1 := make(chan ViaCep)
 	c2 := make(chan ApiCep)
-	go MakeRequestViaCep("06233030")
-	go MakeRequestApiCep("06233-030")
+	go MakeRequestViaCep("06233030", c1)
+	go MakeRequestApiCep("06233-030", c2)
+	select {
+	case msg1 := <-c1:
+		fmt.Println("Recived from ViaCep -", msg1)
+	case msg2 := <-c2:
+		fmt.Println("Recived from ApiCep -", msg2)
+	case <-time.After(time.Second):
+		fmt.Println("timeout")
+	}
 }
 
 func MakeRequestViaCep(cep string, c1 chan ViaCep) {
@@ -52,7 +62,8 @@ func MakeRequestViaCep(cep string, c1 chan ViaCep) {
 	if err != nil {
 		panic(err)
 	}
-	data
+	c1 <- data
+	close(c1)
 }
 
 func MakeRequestApiCep(cep string, c2 chan ApiCep) {
@@ -72,5 +83,6 @@ func MakeRequestApiCep(cep string, c2 chan ApiCep) {
 	if err != nil {
 		panic(err)
 	}
-	data
+	c2 <- data
+	close(c2)
 }
