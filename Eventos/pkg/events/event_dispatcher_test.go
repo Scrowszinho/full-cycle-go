@@ -44,12 +44,21 @@ func (suite *EventDispatcherTestSuite) SetupTest() {
 	suite.handler = TestEventHandler{}
 	suite.handler2 = TestEventHandler{}
 	suite.handler3 = TestEventHandler{}
-	suite.event = TestEvent{Name: "Test", Payload: "test"}
-	suite.event2 = TestEvent{Name: "Test 2", Payload: "test 2	"}
+	suite.event = TestEvent{Name: "Test1", Payload: "test1"}
+	suite.event2 = TestEvent{Name: "Test2", Payload: "test2"}
 }
 
 func (suite *EventDispatcherTestSuite) TestEventDispatcher_Register() {
 	assert.True(suite.T(), true)
+	err := suite.eventDispatcher.Register(suite.event.GetName(), &suite.handler)
+	suite.Nil(err)
+	suite.Equal(1, len(suite.eventDispatcher.handlers[suite.event.GetName()]))
+
+	err = suite.eventDispatcher.Register(suite.event.GetName(), &suite.handler2)
+	suite.Nil(err)
+	suite.Equal(2, len(suite.eventDispatcher.handlers[suite.event.GetName()]))
+	suite.Equal(suite.T(), &suite.handler, suite.eventDispatcher.handlers[suite.event.GetName()][0])
+	suite.Equal(suite.T(), &suite.handler, suite.eventDispatcher.handlers[suite.event.GetName()][1])
 }
 
 func TestSuite(t *testing.T) {
