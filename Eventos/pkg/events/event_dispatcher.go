@@ -2,6 +2,8 @@ package events
 
 import "errors"
 
+var ErrHandlerAlreadyRegistered = errors.New("handler already registered")
+
 type EventDispatcher struct {
 	handlers map[string][]EventHandlerInterface
 }
@@ -16,7 +18,7 @@ func (ed *EventDispatcher) Register(name string, handler EventHandlerInterface) 
 	if _, ok := ed.handlers[name]; ok {
 		for _, h := range ed.handlers[name] {
 			if h == handler {
-				return errors.New("evento registrado")
+				return ErrHandlerAlreadyRegistered
 			}
 		}
 	}
