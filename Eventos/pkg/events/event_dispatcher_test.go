@@ -25,7 +25,9 @@ func (e *TestEvent) GetDataTime() time.Time {
 	return time.Now()
 }
 
-type TestEventHandler struct{}
+type TestEventHandler struct {
+	ID int
+}
 
 func (e *TestEventHandler) Handle(event EventInterface) {}
 
@@ -36,16 +38,16 @@ type EventDispatcherTestSuite struct {
 	handler         TestEventHandler
 	handler2        TestEventHandler
 	handler3        TestEventHandler
-	eventDispatcher EventDispatcher
+	eventDispatcher *EventDispatcher
 }
 
 func (suite *EventDispatcherTestSuite) SetupTest() {
-	suite.eventDispatcher = *NewEventDispatcher()
-	suite.handler = TestEventHandler{}
-	suite.handler2 = TestEventHandler{}
-	suite.handler3 = TestEventHandler{}
+	suite.eventDispatcher = NewEventDispatcher()
+	suite.handler = TestEventHandler{ID: 1}
+	suite.handler2 = TestEventHandler{ID: 2}
+	suite.handler3 = TestEventHandler{ID: 3}
 	suite.event = TestEvent{Name: "Test1", Payload: "test1"}
-	suite.event2 = TestEvent{Name: "Test2", Payload: "test2"}
+	suite.event2 = TestEvent{Name: "Test2", Payload: "test"}
 }
 
 func (suite *EventDispatcherTestSuite) TestEventDispatcher_Register() {
