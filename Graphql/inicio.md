@@ -1,0 +1,1 @@
+Utilizando os comandos de https://gqlgen.com/
