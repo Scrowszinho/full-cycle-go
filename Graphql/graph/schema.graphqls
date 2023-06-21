@@ -5,7 +5,7 @@ type Category {
   courses: [Course!]!
 }
 
-tpye Course {
+type Course {
   id: ID!
   name: String!
   description: String
