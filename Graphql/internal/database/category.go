@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 
-	"github.com/dgryski/trifles/uuid"
+	"github.com/google/uuid"
 )
 
 type Category struct {
