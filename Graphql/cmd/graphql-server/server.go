@@ -22,7 +22,7 @@ func main() {
 	}
 	defer db.Close()
 
-	categoryDB := database.NewCategoryDB(db)
+	categoryDB := database.NewCategory(db)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
