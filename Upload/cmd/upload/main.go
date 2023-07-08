@@ -21,8 +21,8 @@ func init() {
 		&aws.Config{
 			Region: aws.String("us-east-1"),
 			Credentials: credentials.NewStaticCredentials(
-				"Teste",
-				"Teste",
+				"AKIASOABMIYXN4QNLYVP",
+				"HRiewAv09p0o2IFE2Eqt57aHRNN3RzBnQaQ+XSA4",
 				"",
 			),
 		},
@@ -31,11 +31,11 @@ func init() {
 		panic(err)
 	}
 	s3Client = s3.New(sess)
-	s3Bucket = "teste"
+	s3Bucket = "goexpertbucket"
 }
 
 func main() {
-	dir, err := os.Open("./tmp")
+	dir, err := os.Open("/tmp")
 	if err != nil {
 		panic(err)
 	}
@@ -54,7 +54,7 @@ func main() {
 }
 
 func uploadFile(filename string) {
-	completeFileName := fmt.Sprintf("./tmp/%s", filename)
+	completeFileName := fmt.Sprintf("/tmp/%s", filename)
 	fmt.Printf("Uploding file %s to bucket %s", completeFileName, s3Bucket)
 	f, err := os.Open(completeFileName)
 	if err != nil {
