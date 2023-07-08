@@ -43,6 +43,18 @@ func main() {
 	}
 	defer dir.Close()
 	uploadControl := make(chan struct{}, 10)
+	errorFileUpload := make(chan string, 10)
+
+	go func() {
+		for {
+			select {
+			case filename := <-errorFileUpload:
+				uploadControl <- struct{}{}
+				wg.Add(1)
+				go uploadFile(filename, uploadControl, errorFileUpload)
+			}
+		}
+	}()
 	for {
 		files, err := dir.Readdir(10)
 		if err != nil {
@@ -54,12 +66,12 @@ func main() {
 		}
 		wg.Add(1)
 		uploadControl <- struct{}{}
-		go uploadFile(files[0].Name(), uploadControl)
+		go uploadFile(files[0].Name(), uploadControl, errorFileUpload)
 	}
 	wg.Wait()
 }
 
-func uploadFile(filename string, uploadControl <-chan struct{}) {
+func uploadFile(filename string, uploadControl <-chan struct{}, errorUploadFile chan<- string) {
 	defer wg.Done()
 	completeFileName := fmt.Sprintf("/tmp/%s", filename)
 	fmt.Printf("Uploding file %s to bucket %s", completeFileName, s3Bucket)
@@ -67,6 +79,7 @@ func uploadFile(filename string, uploadControl <-chan struct{}) {
 	if err != nil {
 		fmt.Printf("Error openning file %s\n", completeFileName)
 		<-uploadControl
+		errorUploadFile <- completeFileName
 		return
 	}
 	defer f.Close()
@@ -79,6 +92,7 @@ func uploadFile(filename string, uploadControl <-chan struct{}) {
 	if err != nil {
 		fmt.Printf("Error upload file %s\n", completeFileName)
 		<-uploadControl
+		errorUploadFile <- completeFileName
 		return
 	}
 	fmt.Printf("File %s upload successful\n", completeFileName)
