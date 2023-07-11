@@ -12,25 +12,22 @@ import (
 // categoryCmd represents the category command
 var categoryCmd = &cobra.Command{
 	Use:   "category",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Category",
+	Long:  `Desc`,
 	Run: func(cmd *cobra.Command, args []string) {
-		name, _ := cmd.Flags().GetString("name")
-		fmt.Println("category called ", name)
+		// name, _ := cmd.Flags().GetString("name")
+		fmt.Println("category called ", category)
 		exists, _ := cmd.Flags().GetBool("exists")
 		fmt.Println("category called ", exists)
 		cmd.Help()
 	},
 }
 
+var category string
+
 func init() {
 	rootCmd.AddCommand(categoryCmd)
-	categoryCmd.PersistentFlags().StringP("name", "n", "Y", "Name of the category")
+	categoryCmd.PersistentFlags().StringVarP(&category, "name", "n", "Y", "Name of the category")
 	categoryCmd.PersistentFlags().BoolP("exists", "e", false, "Check if category exists")
 	// Here you will define your flags and configuration settings.
 
