@@ -21,6 +21,15 @@ var categoryCmd = &cobra.Command{
 		fmt.Println("category called ", exists)
 		cmd.Help()
 	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		fmt.Print("Pre run")
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		fmt.Print("Post run")
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return fmt.Errorf("Error")
+	},
 }
 
 var category string
