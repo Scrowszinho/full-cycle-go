@@ -13,8 +13,8 @@ type Color struct {
 	ProductID   string
 	Name        string
 	Description sql.NullString
-	Price       string
-	Pricefinal  string
+	Price       float64
+	Pricefinal  float64
 }
 
 type Product struct {

@@ -19,3 +19,7 @@ DELETE FROM products WHERE id = ?;
 -- name: CreateColor :exec
 INSERT INTO colors (id, name, product_id, description, price, priceFinal)
 VALUES (?, ?, ?, ?, ?, ?);
+
+-- name: ListColors :many
+SELECT c.*, p.name as category_name 
+FROM colors c JOIN products p ON c.product_id = p.id;

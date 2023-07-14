@@ -7,7 +7,6 @@ import (
 	"teste/sqlc/internal/db"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/google/uuid"
 )
 
 type ColorsDB struct {
@@ -93,27 +92,35 @@ func main() {
 	}
 	defer dbNewConn.Close()
 
-	// queries := db.New(dbNewConn)
+	queries := db.New(dbNewConn)
 
-	courseArgs := ProductParams{
-		ID:          uuid.New().String(),
-		Name:        "Copo",
-		Description: sql.NullString{String: "Copo desc", Valid: true},
-	}
+	// courseArgs := ProductParams{
+	// 	ID:          uuid.New().String(),
+	// 	Name:        "Copo",
+	// 	Description: sql.NullString{String: "Copo desc", Valid: true},
+	// }
 
-	categoryArgs := ColorParams{
-		ID:          uuid.New().String(),
-		Name:        "Azul",
-		Description: sql.NullString{String: "Azul desc", Valid: true},
-		ProductID:   courseArgs.ID,
-		Price:       10.00,
-		Pricefinal:  15.00,
-	}
+	// categoryArgs := ColorParams{
+	// 	ID:          uuid.New().String(),
+	// 	Name:        "Azul",
+	// 	Description: sql.NullString{String: "Azul desc", Valid: true},
+	// 	ProductID:   courseArgs.ID,
+	// 	Price:       10.00,
+	// 	Pricefinal:  15.00,
+	// }
 
-	colorsDB := NewColorsDB(dbNewConn)
-	err = colorsDB.CreateCourseAndCategory(ctx, courseArgs, categoryArgs)
+	// colorsDB := NewColorsDB(dbNewConn)
+	// err = colorsDB.CreateCourseAndCategory(ctx, courseArgs, categoryArgs)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	colors, err := queries.ListColors(ctx)
 	if err != nil {
 		panic(err)
+	}
+	for _, color := range colors {
+		println(color.ID, color.Name, color.Description.String, color.ProductID, color.Price, color.Pricefinal, color.CategoryName)
 	}
 
 }

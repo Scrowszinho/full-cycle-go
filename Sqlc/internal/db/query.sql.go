@@ -96,6 +96,52 @@ func (q *Queries) GetColors(ctx context.Context, id string) ([]Color, error) {
 	return items, nil
 }
 
+const listColors = `-- name: ListColors :many
+SELECT c.id, c.product_id, c.name, c.description, c.price, c.pricefinal, p.name as category_name 
+FROM colors c JOIN products p ON c.product_id = p.id
+`
+
+type ListColorsRow struct {
+	ID           string
+	ProductID    string
+	Name         string
+	Description  sql.NullString
+	Price        float64
+	Pricefinal   float64
+	CategoryName string
+}
+
+func (q *Queries) ListColors(ctx context.Context) ([]ListColorsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listColors)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListColorsRow
+	for rows.Next() {
+		var i ListColorsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ProductID,
+			&i.Name,
+			&i.Description,
+			&i.Price,
+			&i.Pricefinal,
+			&i.CategoryName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listProducts = `-- name: ListProducts :many
 SELECT id, name, description FROM products
 `
