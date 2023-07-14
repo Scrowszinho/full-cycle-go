@@ -15,3 +15,7 @@ WHERE id = ?;
 
 -- name: DeleteProduct :exec
 DELETE FROM products WHERE id = ?;
+
+-- name: CreateColor :exec
+INSERT INTO colors (id, name, product_id, description, price, priceFinal)
+VALUES (?, ?, ?, ?, ?, ?);

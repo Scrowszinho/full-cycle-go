@@ -10,6 +10,32 @@ import (
 	"database/sql"
 )
 
+const createColor = `-- name: CreateColor :exec
+INSERT INTO colors (id, name, product_id, description, price, priceFinal)
+VALUES (?, ?, ?, ?, ?, ?)
+`
+
+type CreateColorParams struct {
+	ID          string
+	Name        string
+	ProductID   string
+	Description sql.NullString
+	Price       string
+	Pricefinal  string
+}
+
+func (q *Queries) CreateColor(ctx context.Context, arg CreateColorParams) error {
+	_, err := q.db.ExecContext(ctx, createColor,
+		arg.ID,
+		arg.Name,
+		arg.ProductID,
+		arg.Description,
+		arg.Price,
+		arg.Pricefinal,
+	)
+	return err
+}
+
 const createProduct = `-- name: CreateProduct :exec
 INSERT INTO products (id, name, description) 
 VALUES (?, ?, ?)
