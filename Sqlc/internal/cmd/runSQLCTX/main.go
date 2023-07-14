@@ -57,7 +57,7 @@ func (c *ColorsDB) CreateCourseAndCategory(ctx context.Context, argsProducts Pro
 	err := c.callTx(ctx, func(q *db.Queries) error {
 		var err error
 		err = q.CreateProduct(ctx, db.CreateProductParams{
-			ID:          uuid.New().String(),
+			ID:          argsProducts.ID,
 			Name:        argsProducts.Name,
 			Description: argsProducts.Description,
 		})
@@ -66,7 +66,7 @@ func (c *ColorsDB) CreateCourseAndCategory(ctx context.Context, argsProducts Pro
 		}
 
 		err = q.CreateColor(ctx, db.CreateColorParams{
-			ID:          uuid.New().String(),
+			ID:          argsColor.ID,
 			Name:        argsColor.Name,
 			ProductID:   argsColor.ProductID,
 			Description: argsColor.Description,
@@ -93,6 +93,27 @@ func main() {
 	}
 	defer dbNewConn.Close()
 
-	queries := db.New(dbNewConn)
+	// queries := db.New(dbNewConn)
+
+	courseArgs := ProductParams{
+		ID:          uuid.New().String(),
+		Name:        "Copo",
+		Description: sql.NullString{String: "Copo desc", Valid: true},
+	}
+
+	categoryArgs := ColorParams{
+		ID:          uuid.New().String(),
+		Name:        "Azul",
+		Description: sql.NullString{String: "Azul desc", Valid: true},
+		ProductID:   courseArgs.ID,
+		Price:       10.00,
+		Pricefinal:  15.00,
+	}
+
+	colorsDB := NewColorsDB(dbNewConn)
+	err = colorsDB.CreateCourseAndCategory(ctx, courseArgs, categoryArgs)
+	if err != nil {
+		panic(err)
+	}
 
 }
