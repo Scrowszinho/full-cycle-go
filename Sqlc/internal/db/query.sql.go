@@ -20,8 +20,8 @@ type CreateColorParams struct {
 	Name        string
 	ProductID   string
 	Description sql.NullString
-	Price       string
-	Pricefinal  string
+	Price       float64
+	Pricefinal  float64
 }
 
 func (q *Queries) CreateColor(ctx context.Context, arg CreateColorParams) error {
