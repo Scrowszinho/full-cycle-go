@@ -34,5 +34,15 @@ func (a *AddCourseUseCase) Execute(ctx context.Context, input InputUseCase) erro
 	if err != nil {
 		return err
 	}
+
+	course := entity.Course{
+		Name:       input.CourseName,
+		CategoryID: input.CourseCategoryID,
+	}
+	err = a.CourseRepository.Insert(ctx, course)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
