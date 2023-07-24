@@ -6,4 +6,5 @@ use (
     ./Upload
     ./Cobra-Cli
     ./Sqlc
+    ./UOW
 )
