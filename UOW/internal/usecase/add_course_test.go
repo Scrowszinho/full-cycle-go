@@ -11,7 +11,6 @@ import (
 func TestAddCourse(t *testing.T) {
 	dbt, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/courses")
 	assert.NoError(t, err)
-
 	dbt.Exec("DROP TABLE IF EXISTS courses")
 	dbt.Exec("DROP TABLE IF EXISTS categories")
 
