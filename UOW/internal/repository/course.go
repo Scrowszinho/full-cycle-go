@@ -26,6 +26,6 @@ func NewCourseRepository(dtb *sql.DB) *CourseRepository {
 func (r *CourseRepository) Insert(ctx context.Context, course entity.Course) error {
 	return r.Queries.CreateCategory(ctx, db.CreateCategoryParams{
 		Name: course.Name,
-		CategoryID: int32(course.CategoryID)
+		ID:   int32(course.CategoryID),
 	})
 }
