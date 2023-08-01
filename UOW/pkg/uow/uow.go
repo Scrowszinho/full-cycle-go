@@ -12,7 +12,7 @@ type RepositoryFactory func(tx *sql.Tx) interface{}
 type UowInterface interface {
 	Register(name string, fc RepositoryFactory)
 	GetRepository(ctx context.Context, name string) (interface{}, error)
-	Do(ctx context.Context, fn func(uow *UowInterface) error) error
+	Do(ctx context.Context, fn func(uow *Uow) error) error
 	CommitOrRollback() error
 	RollBack() error
 	UnRegister(name string)
@@ -22,6 +22,18 @@ type Uow struct {
 	Db           *sql.DB
 	Tx           *sql.Tx
 	Repositories map[string]RepositoryFactory
+}
+
+func (u *Uow) GetRepository(ctx context.Context, name string) (interface{}, error) {
+	if u.Tx == nil {
+		tx, err := u.Db.BeginTx(ctx, nil)
+		if err != nil {
+			return nil, err
+		}
+		u.Tx = tx
+	}
+	fc := u.Repositories[name](u.Tx)
+	return fc, nil
 }
 
 func NewUow(ctx context.Context, db *sql.DB) *Uow {
