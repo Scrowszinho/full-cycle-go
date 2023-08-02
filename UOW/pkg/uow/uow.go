@@ -14,7 +14,7 @@ type UowInterface interface {
 	GetRepository(ctx context.Context, name string) (interface{}, error)
 	Do(ctx context.Context, fn func(uow *Uow) error) error
 	CommitOrRollback() error
-	RollBack() error
+	Rollback() error
 	UnRegister(name string)
 }
 
