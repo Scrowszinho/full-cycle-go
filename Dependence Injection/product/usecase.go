@@ -1,11 +1,11 @@
 package product
 
 type ProductUseCase struct {
-	repository *ProductRepository
+	repository ProductRepositoryInterface
 }
 
-func NewProductUseCase(repository *ProductRepository) *ProductUseCase {
-	return &ProductUseCase{repository: repository}
+func NewProductUseCase(repository ProductRepositoryInterface) *ProductUseCase {
+	return &ProductUseCase{repository}
 }
 
 func (u *ProductUseCase) GetProduct(id int) (Product, error) {
