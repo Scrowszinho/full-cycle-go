@@ -19,7 +19,7 @@ type OrderOutputDTO struct {
 }
 
 type CreateOrderUseCase struct {
-	OrderInputDTO   entity.OrderRepositoryInterface
+	OrderRepository entity.OrderRepositoryInterface
 	OrderCreated    events.EventInterface
 	EventDispatcher events.EventDispatcherInterface
 }
@@ -29,13 +29,13 @@ func NewCreateOrderRepository(
 	OrderCreated events.EventInterface,
 	EventDispatcher events.EventDispatcherInterface) *CreateOrderUseCase {
 	return &CreateOrderUseCase{
-		OrderInputDTO:   OrderRepository,
+		OrderRepository: OrderRepository,
 		OrderCreated:    OrderCreated,
 		EventDispatcher: EventDispatcher,
 	}
 }
 
-func (c *CreateOrderUseCase) Execute(input OrderInputDTO) (OrderInputDTO, error) {
+func (c *CreateOrderUseCase) Execute(input OrderInputDTO) (OrderOutputDTO, error) {
 	order := entity.Order{
 		ID:    input.ID,
 		Price: input.Price,
@@ -43,14 +43,14 @@ func (c *CreateOrderUseCase) Execute(input OrderInputDTO) (OrderInputDTO, error)
 	}
 
 	order.CalculateFinalPrice()
-	err := c.OrderRepository.Save(order); err != nil {
+	if err := c.OrderRepository.Save(&order); err != nil {
 		return OrderOutputDTO{}, err
 	}
 
 	dto := OrderOutputDTO{
-		ID: order.ID,
-		Price: order.Price,
-		Tax: order.Tax,
+		ID:         order.ID,
+		Price:      order.Price,
+		Tax:        order.Tax,
 		FinalPrice: order.Price + order.Tax,
 	}
 
