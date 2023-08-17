@@ -7,5 +7,5 @@ use (
     ./Cobra-Cli
     ./Sqlc
     ./UOW
-    ./Dependence Injection
+    ./Clean Arc
 )
